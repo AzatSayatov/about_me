@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azat Sayadov — Android Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07080F;
+    --surface: #10111C;
+    --surface2: #181926;
+    --accent: #6366F1;
+    --accent2: #A78BFA;
+    --green: #34D399;
+    --text: #EEEEFF;
+    --muted: #8887AA;
+    --border: rgba(99,102,241,0.15);
+    --glow: rgba(99,102,241,0.22);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(99,102,241,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    pointer-events: none; z-index: 0;
+  }
+  .orb {
+    position: fixed; border-radius: 50%;
+    filter: blur(110px); pointer-events: none; z-index: 0;
+  }
+  .orb-1 { width: 550px; height: 550px; background: rgba(99,102,241,0.1); top: -180px; right: -180px; }
+  .orb-2 { width: 380px; height: 380px; background: rgba(52,211,153,0.06); bottom: 80px; left: -80px; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 16px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    background: rgba(7,8,15,0.75);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    font-size: 14px; font-weight: 500; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 120px 80px 60px;
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(99,102,241,0.1);
+    border: 1px solid var(--border);
+    border-radius: 100px; padding: 6px 18px;
+    font-size: 13px; color: var(--accent2);
+    margin-bottom: 28px; width: fit-content;
+  }
+  .badge-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green); animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(46px, 7vw, 82px);
+    font-weight: 800; line-height: 1.0;
+    letter-spacing: -2px; margin-bottom: 6px;
+  }
+  .h1-role {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 52px);
+    font-weight: 700; line-height: 1.1;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 55%, var(--green) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 24px;
+  }
+  .hero-desc {
+    max-width: 540px; font-size: 16px;
+    color: var(--muted); font-weight: 300; line-height: 1.75;
+    margin-bottom: 36px;
+  }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white; padding: 13px 30px;
+    border-radius: 12px; font-weight: 600; font-size: 14px;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 28px var(--glow);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 36px var(--glow); }
+  .btn-ghost {
+    background: transparent; color: var(--text);
+    padding: 13px 30px; border-radius: 12px;
+    font-weight: 500; font-size: 14px; text-decoration: none;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); background: rgba(99,102,241,0.07); }
+
+  .stats-row {
+    display: flex; gap: 0;
+    margin-top: 56px;
+    border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+    background: var(--surface);
+    max-width: 560px;
+  }
+  .stat { flex: 1; padding: 22px 24px; border-right: 1px solid var(--border); text-align: center; }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stat-label { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; }
+  .container { max-width: 1060px; margin: 0 auto; padding: 80px 40px; }
+  .section-tag {
+    font-size: 11px; font-weight: 600; letter-spacing: 3px;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 3.5vw, 38px);
+    font-weight: 800; margin-bottom: 44px; line-height: 1.2;
+  }
+
+  /* SKILLS */
+  #skills { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .skill-card {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px;
+    transition: border-color 0.3s, transform 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .skill-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+  }
+  .skill-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .skill-card:hover::before { transform: scaleX(1); }
+  .skill-icon { font-size: 26px; margin-bottom: 10px; }
+  .skill-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    background: rgba(99,102,241,0.1); color: var(--accent2);
+    font-size: 11px; font-weight: 500; padding: 3px 10px;
+    border-radius: 100px; border: 1px solid rgba(99,102,241,0.2);
+  }
+
+  /* PROJECTS */
+  .projects-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 22px;
+  }
+  .project-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; padding: 26px;
+    transition: transform 0.2s, border-color 0.3s, box-shadow 0.3s;
+  }
+  .project-card:hover {
+    transform: translateY(-4px); border-color: var(--accent);
+    box-shadow: 0 18px 50px rgba(99,102,241,0.1);
+  }
+  .project-icon { font-size: 32px; margin-bottom: 14px; }
+  .project-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 8px; }
+  .project-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 18px; }
+  .project-tech { display: flex; gap: 7px; flex-wrap: wrap; }
+
+  /* EDUCATION */
+  #education { background: var(--surface); border-top: 1px solid var(--border); }
+  .edu-card {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 18px; padding: 28px 32px;
+    max-width: 680px;
+    border-left: 3px solid var(--accent);
+  }
+  .edu-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 6px; }
+  .edu-degree { color: var(--accent2); font-size: 14px; margin-bottom: 4px; }
+  .edu-loc { color: var(--muted); font-size: 13px; }
+
+  /* CONTACT */
+  #contact { padding: 80px 40px; text-align: center; position: relative; z-index: 1; }
+  .contact-box {
+    max-width: 560px; margin: 0 auto;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 22px; padding: 50px 44px;
+    position: relative; overflow: hidden;
+  }
+  .contact-box::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--green));
+  }
+  .contact-links {
+    display: flex; justify-content: center; gap: 12px;
+    flex-wrap: wrap; margin-top: 28px;
+  }
+  .contact-link {
+    display: flex; align-items: center; gap: 7px;
+    color: var(--muted); font-size: 13px; text-decoration: none;
+    padding: 10px 18px; border: 1px solid var(--border);
+    border-radius: 10px; transition: border-color 0.2s, color 0.2s;
+  }
+  .contact-link:hover { border-color: var(--accent); color: var(--accent2); }
+
+  footer {
+    text-align: center; padding: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 12px;
+    position: relative; z-index: 1;
+  }
+
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.55s, transform 0.55s; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 768px) {
+    nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+    #hero { padding: 100px 24px 40px; }
+    .container { padding: 56px 20px; }
+    #contact { padding: 56px 20px; }
+    .contact-box { padding: 32px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<nav>
+  <div class="nav-logo">AS.</div>
+  <div class="nav-links">
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#education">Education</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<div style="position:relative;z-index:1">
+
+<!-- HERO -->
+<section id="hero">
+  <div class="badge">
+    <span class="badge-dot"></span>
+    Open to opportunities
+  </div>
+  <h1>Azat Sayadov</h1>
+  <div class="h1-role">Android Developer</div>
+  <p class="hero-desc">
+    3 years building native Android apps with Kotlin and Jetpack Compose.
+    Experienced in Kotlin Multiplatform (KMP/CMP) and map-based applications.
+    Based in Ashgabat, Turkmenistan — available remotely.
+  </p>
+  <div class="hero-actions">
+    <a href="Sayadov_Azat_Android_Resume.pdf" class="btn-primary" download>⬇ Download Resume PDF</a>
+    <a href="https://github.com/AzatSayatov" target="_blank" class="btn-ghost">🐙 GitHub →</a>
+  </div>
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Years exp.</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">10+</div>
+      <div class="stat-label">Technologies</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">KMP</div>
+      <div class="stat-label">Multiplatform</div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="section-tag">Tech Stack</div>
+    <h2 class="section-title">What I work with</h2>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="skill-icon">⚡</div>
+        <div class="skill-name">Languages</div>
+        <div class="skill-tags"><span class="tag">Kotlin</span><span class="tag">Java</span></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🎨</div>
+        <div class="skill-name">UI</div>
+        <div class="skill-tags"><span class="tag">Jetpack Compose</span><span class="tag">XML/Views</span><span class="tag">Material 3</span></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🌍</div>
+        <div class="skill-name">Multiplatform</div>
+        <div class="skill-tags"><span class="tag">KMP</span><span class="tag">CMP</span></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🏗️</div>
+        <div class="skill-name">Architecture</div>
+        <div class="skill-tags"><span class="tag">MVVM</span><span class="tag">MVI</span><span class="tag">Clean Arch</span></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🔄</div>
+        <div class="skill-name">Async</div>
+        <div class="skill-tags"><span class="tag">Coroutines</span><span class="tag">Flow</span><span class="tag">RxJava</span></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🔌</div>
+        <div class="skill-name">DI</div>
+        <div class="skill-tags"><span class="tag">Hilt</span><span class="tag">Dagger</span><span class="tag">Koin</span></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🌐</div>
+        <div class="skill-name">Network</div>
+        <div class="skill-tags"><span class="tag">Retrofit</span><span class="tag">OkHttp</span></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🗺️</div>
+        <div class="skill-name">Maps</div>
+        <div class="skill-tags"><span class="tag">Google Maps SDK</span><span class="tag">OpenStreetMap</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="section-tag">Portfolio</div>
+    <h2 class="section-title">Personal Projects</h2>
+    <div class="projects-grid">
+      <div class="project-card reveal">
+        <div class="project-icon">🗺️</div>
+        <div class="project-name">Maps Apps</div>
+        <div class="project-desc">
+          Multiple Android applications featuring interactive maps, real-time
+          location tracking, custom markers and geofencing using Google Maps SDK.
+        </div>
+        <div class="project-tech">
+          <span class="tag">Kotlin</span>
+          <span class="tag">Google Maps SDK</span>
+          <span class="tag">Compose</span>
+        </div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-icon">📱</div>
+        <div class="project-name">KMP / CMP Projects</div>
+        <div class="project-desc">
+          Cross-platform apps sharing business logic between Android and iOS
+          via Kotlin Multiplatform, with UI built using Compose Multiplatform.
+        </div>
+        <div class="project-tech">
+          <span class="tag">KMP</span>
+          <span class="tag">CMP</span>
+          <span class="tag">expect/actual</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="container">
+    <div class="section-tag">Background</div>
+    <h2 class="section-title">Education</h2>
+    <div class="edu-card reveal">
+      <div class="edu-name">Magtymguly Turkmen State University</div>
+      <div class="edu-degree">Applied Mathematics & Computer Science</div>
+      <div class="edu-loc">📍 Ashgabat, Turkmenistan</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container" style="padding-top:20px; padding-bottom:20px">
+    <div class="contact-box reveal">
+      <div class="section-tag" style="text-align:center">Contact</div>
+      <h2 class="section-title" style="margin-bottom:12px; font-size:28px">Let's work together</h2>
+      <p style="color:var(--muted); font-size:14px">
+        Available for remote positions, freelance projects and collaborations.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:sayatovazat60@gmail.com" class="contact-link">📧 Email</a>
+        <a href="https://github.com/AzatSayatov" target="_blank" class="contact-link">🐙 GitHub</a>
+        <a href="https://www.linkedin.com/in/azat-sayatov-326a54396" target="_blank" class="contact-link">💼 LinkedIn</a>
+        <a href="tel:+99363005465" class="contact-link">📱 +993 63 005465</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>© 2024 Azat Sayadov · Android Developer · Ashgabat, Turkmenistan</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 70);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
